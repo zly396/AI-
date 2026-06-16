@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>AI缘份 - 智能婚恋匹配</title>
+<style>
+:root{--primary:#FF5A7E;--p-light:#FF8FA0;--gold:#FFB347;--success:#4CD964;--danger:#FF3B30;--bg:#FFF5F7;--card:#FFFFFF;--text:#333;--t2:#999;--border:#F0F0F0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);max-width:480px;margin:auto;min-height:100vh;overflow-x:hidden}
+.hidden{display:none!important}
+header{background:linear-gradient(135deg,var(--primary),var(--p-light));color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+header h1{font-size:20px;font-weight:700}
+header .hbtn{background:rgba(255,255,255,.2);border:none;color:#fff;padding:6px 12px;border-radius:16px;font-size:13px;cursor:pointer}
+nav{display:flex;background:#fff;border-top:1px solid var(--border);position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:auto;z-index:100}
+nav .tab{flex:1;text-align:center;padding:8px 4px;cursor:pointer;color:var(--t2);font-size:11px;transition:.2s}
+nav .tab.on{color:var(--primary)}
+nav .tab .ic{font-size:22px;display:block;margin-bottom:1px}
+.page{padding:16px 16px 80px}
+.card{background:var(--card);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(255,90,126,.08)}
+.inp{margin-bottom:12px}
+.inp label{display:block;font-size:13px;color:var(--t2);margin-bottom:4px;font-weight:500}
+.inp input,.inp select,.inp textarea{width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:12px;font-size:15px;outline:none;background:#FAFAFA;transition:.2s}
+.inp input:focus,.inp textarea:focus{border-color:var(--primary);background:#fff}
+.inp textarea{resize:vertical;min-height:70px}
+.btn{width:100%;padding:13px;border-radius:25px;font-size:16px;font-weight:600;cursor:pointer;transition:.1s;border:none}
+.btn:active{transform:scale(.97)}
+.btn-p{background:linear-gradient(135deg,var(--primary),var(--p-light));color:#fff}
+.btn-s{background:#fff;color:var(--primary);border:2px solid var(--primary)}
+.btn-sm{padding:7px 16px;font-size:13px;border-radius:18px;width:auto}
+.m-card{position:relative;border-radius:20px;overflow:hidden;background:#fff;box-shadow:0 2px 12px rgba(255,90,126,.08);margin-bottom:20px}
+.m-card .ph{width:100%;height:350px;object-fit:cover;background:linear-gradient(135deg,#ffc1cc,#e8d5f5)}
+.m-card .inf{padding:14px 16px}
+.m-card .ms{display:inline-block;background:linear-gradient(135deg,var(--primary),var(--gold));color:#fff;padding:4px 12px;border-radius:15px;font-size:13px;font-weight:700;margin-bottom:8px}
+.m-card .tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.m-card .tag{background:#FFF0F3;color:var(--primary);padding:3px 10px;border-radius:12px;font-size:12px}
+.m-card .act{display:flex;gap:16px;padding:12px;justify-content:center}
+.m-card .bs{width:56px;height:56px;border-radius:50%;border:none;font-size:26px;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.m-card .bsk{background:#F5F5F5;color:var(--t2)}
+.m-card .bsl{background:linear-gradient(135deg,var(--primary),var(--p-light));color:#fff;width:66px;height:66px;font-size:30px}
+.m-card .bsl:active{transform:scale(1.15)}
+.m-card .bsk:active{transform:scale(.9)}
+.bub{padding:10px 14px;border-radius:18px;margin:5px 0;max-width:80%;word-break:break-word;font-size:15px;line-height:1.5}
+.bub.me{background:linear-gradient(135deg,var(--primary),var(--p-light));color:#fff;margin-left:auto;border-bottom-right-radius:4px}
+.bub.you{background:#F0F0F0;color:var(--text);margin-right:auto;border-bottom-left-radius:4px}
+.chat-bar{position:fixed;bottom:60px;left:0;right:0;max-width:480px;margin:auto;background:#fff;padding:10px 16px;display:flex;gap:8px;border-top:1px solid var(--border);z-index:90}
+.chat-bar input{flex:1;padding:11px 16px;border:2px solid var(--border);border-radius:25px;font-size:15px;outline:none;background:#F8F8F8}
+.chat-bar button{background:var(--primary);color:#fff;border:none;width:42px;height:42px;border-radius:50%;font-size:18px;cursor:pointer}
+.conv{display:flex;gap:12px;padding:14px;border-bottom:1px solid var(--border);cursor:pointer;align-items:center;transition:.1s}
+.conv:hover{background:#FFF5F7}
+.conv .av{width:50px;height:50px;border-radius:50%;object-fit:cover;background:#eee}
+.conv .badge{background:var(--primary);color:#fff;font-size:11px;padding:2px 7px;border-radius:10px}
+.modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center}
+.modal-box{background:#fff;border-radius:20px;padding:24px;width:90%;max-width:400px;max-height:80vh;overflow-y:auto}
+.match-pop{text-align:center}
+.match-pop .avs{display:flex;justify-content:center;align-items:center;gap:20px;margin:20px 0}
+.match-pop .avs img{width:70px;height:70px;border-radius:50%;border:3px solid var(--primary)}
+.ac-panel{background:linear-gradient(135deg,#FFF0F3,#F3E5FF);border-radius:16px;padding:14px;margin-top:10px}
+.ac-panel h4{color:var(--primary);margin-bottom:6px;font-size:14px}
+.ac-item{background:#fff;padding:11px 14px;border-radius:12px;margin:5px 0;cursor:pointer;font-size:14px;border-left:3px solid var(--primary);transition:.1s}
+.ac-item:hover{background:#FFF5F7}
+.ac-item .sty{font-size:11px;color:var(--primary);font-weight:600;margin-bottom:3px}
+.feature-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 2px 12px rgba(255,90,126,.08);display:flex;align-items:center;gap:12px;cursor:pointer;transition:.1s}
+.feature-card:active{transform:scale(.98)}
+.feature-card .fi{font-size:32px}
+.feature-card h3{font-size:15px;margin-bottom:3px}
+.feature-card p{font-size:12px;color:var(--t2)}
+.emp{text-align:center;padding:50px 20px;color:var(--t2)}
+.emp .ei{font-size:56px;margin-bottom:12px}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--success);color:#fff;padding:12px 24px;border-radius:25px;font-size:14px;z-index:300;animation:ft 3s forwards}
+@keyframes ft{0%{opacity:0;transform:translateX(-50%) translateY(-20px)}10%{opacity:1;transform:translateX(-50%) translateY(0)}80%{opacity:1}100%{opacity:0}}
+.prog{height:6px;background:#F0F0F0;border-radius:3px;margin:8px 0;overflow:hidden}
+.prog .fl{height:100%;background:linear-gradient(to right,var(--primary),var(--gold));border-radius:3px;transition:.5s}
+.vip-badge{background:linear-gradient(135deg,#FFB347,#FF5A7E);color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.ver-badge{color:var(--success);font-size:14px}
+.prof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:10px 0}
+.prof-grid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px}
+.inf-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px}
+.inf-row .l{color:var(--t2)}
+.tip{text-align:center;font-size:12px;color:#ccc;margin-top:14px}
+.vip-plan{border:2px solid var(--border);border-radius:14px;padding:14px;margin:8px 0;cursor:pointer;transition:.2s}
+.vip-plan.sel{border-color:var(--primary);background:#FFF5F7}
+.vip-plan h4{font-size:16px;margin-bottom:4px}
+.vip-plan .price{font-size:20px;font-weight:700;color:var(--primary)}
+</style>
+</head>
+<body>
+
+<header><h1 id="ht">AI缘份</h1><button class="hbtn hidden" id="logoutBtn" onclick="logout()">退出</button></header>
+
+<!-- Auth -->
+<div id="pgAuth" class="page">
+<div style="text-align:center;padding:35px 0 15px"><div style="font-size:56px">💕</div><h2>AI缘份</h2><p style="color:var(--t2);font-size:14px">AI驱动的智能婚恋匹配平台</p></div>
+<div class="card">
+<h3 style="text-align:center;margin-bottom:14px" id="authTitle">登录</h3>
+<div class="inp"><label>手机号</label><input id="ap" placeholder="请输入手机号" maxlength="11"></div>
+<div class="inp"><label>密码</label><input id="aw" type="password" placeholder="请输入密码(至少6位)"></div>
+<div class="inp hidden" id="anG"><label>昵称</label><input id="an" placeholder="给自己取个昵称吧"></div>
+<button class="btn btn-p" id="aBtn" onclick="doAuth()">登录</button>
+<p style="text-align:center;margin-top:10px;font-size:13px;color:var(--t2)">
+<span id="asText">还没有账号？</span><a href="#" onclick="toggleAuth()" style="color:var(--primary);font-weight:600" id="asLink">立即注册</a></p>
+</div>
+<div class="tip">演示账号: 13800000001~13800000010 | 密码: 123456</div>
+</div>
+
+<!-- Main -->
+<div id="pgMain" class="page hidden">
+<!-- Tab: Recommend -->
+<div id="tabRec">
+<div id="recCards"></div>
+<div class="emp hidden" id="recEmpty"><div class="ei">🔍</div><p>今日推荐已看完</p><p style="font-size:12px;color:#ccc">凌晨6点更新，请明日再来</p></div>
+</div>
+<!-- Tab: Discover -->
+<div id="tabDis" class="hidden">
+<div class="feature-card" onclick="showTab('rec')"><div class="fi">💖</div><div><h3>智能推荐</h3><p>AI精准匹配你的有缘人</p></div></div>
+<div class="feature-card" onclick="showTab('msgs')"><div class="fi">💬</div><div><h3>消息</h3><p id="disMsgCount">查看你的聊天消息</p></div></div>
+<div class="feature-card" onclick="loadWhoLikedMe()"><div class="fi">👀</div><div><h3>谁喜欢了我</h3><p>查看对你心仪的人</p></div></div>
+<div class="feature-card" onclick="showTab('matches')"><div class="fi">💕</div><div><h3>我的缘分</h3><p>查看匹配成功的TA</p></div></div>
+<div class="feature-card" onclick="showTab('profile')"><div class="fi">👤</div><div><h3>个人资料</h3><p>完善资料提高匹配率</p></div></div>
+<div class="feature-card" onclick="showTab('ai')"><div class="fi">🤖</div><div><h3>AI恋爱助手</h3><p>智能情感分析与建议</p></div></div>
+<div class="feature-card" onclick="showTab('vip')"><div class="fi">👑</div><div><h3>VIP中心</h3><p>解锁更多高级功能</p></div></div>
+</div>
+<!-- Tab: Messages -->
+<div id="tabMsgs" class="hidden"><div id="convList"></div><div class="emp hidden" id="msgEmpty"><div class="ei">💬</div><p>暂无聊天消息</p><p style="font-size:12px;color:#ccc">快去匹配你的有缘人吧</p></div></div>
+<!-- Tab: Chat Detail -->
+<div id="tabChat" class="hidden"><div id="chatMsgs" style="min-height:60vh"></div><div id="aiCoachPanel" class="ac-panel hidden"></div></div>
+<!-- Tab: AI Assistant -->
+<div id="tabAi" class="hidden">
+<h3 style="margin-bottom:14px">🤖 AI恋爱助手</h3>
+<div class="feature-card"><div class="fi">💝</div><div><h3>智能问答</h3><p>随时随地解答你的恋爱疑惑</p></div></div>
+<div class="feature-card"><div class="fi">📊</div><div><h3>情感分析</h3><p>了解你和TA的情感互动状态</p></div></div>
+<div class="feature-card"><div class="fi">📈</div><div><h3>关系评估</h3><p>你们的关系处于什么阶段？</p></div></div>
+<div class="feature-card"><div class="fi" onclick="alert('即将上线，敬请期待')">📚</div><div><h3>恋爱课程</h3><p>专属定制恋爱情商提升课程</p></div></div>
+</div>
+<!-- Tab: Profile -->
+<div id="tabProfile" class="hidden"><div id="profileContent"></div></div>
+<!-- Tab: Matches -->
+<div id="tabMatches" class="hidden"><h3 style="margin-bottom:14px">💕 我的缘分</h3><div id="matchList"></div><div class="emp hidden" id="matchEmpty"><div class="ei">💝</div><p>还没有匹配成功</p><p style="font-size:12px;color:#ccc">多去心仪别人吧！</p></div></div>
+<!-- Tab: VIP -->
+<div id="tabVip" class="hidden"><h3 style="text-align:center;margin-bottom:10px">👑 升级VIP</h3><div class="card"><h4>VIP专属权益</h4><p style="font-size:13px;color:var(--t2);line-height:1.8">✅ 每日30人推荐 ✅ 查看谁喜欢了我<br>✅ AI聊天教练 ✅ 超级精准匹配<br>✅ 无限制心仪 ✅ 尊贵身份标识</p></div>
+<div class="vip-plan sel"><h4>月卡</h4><p class="price">¥68/月</p></div>
+<div class="vip-plan"><h4>季卡 💎 推荐</h4><p class="price">¥168/季 <span style="font-size:13px;color:var(--t2)">(省¥36)</span></p></div>
+<div class="vip-plan"><h4>年卡 👑</h4><p class="price">¥588/年 <span style="font-size:13px;color:var(--t2)">(省¥228)</span></p></div>
+<button class="btn btn-p" onclick="alert('支付功能开发中，敬请期待！')">立即开通 VIP</button>
+<p style="text-align:center;margin-top:8px;font-size:12px;color:var(--t2)">安心保障: 7天无条件退款</p></div>
+</div>
+
+<!-- Chat input bar (hidden by default) -->
+<div id="chatInputBar" class="chat-bar hidden"><input id="chatInput" placeholder="输入消息..." onkeydown="if(event.key==='Enter')sendChatMsg()"><button onclick="sendChatMsg()">➤</button></div>
+
+<!-- Match popup modal -->
+<div id="matchModal" class="modal hidden"><div class="modal-box match-pop"><h2>🎉 恭喜！</h2><div class="avs"><img id="mpImg1"><span style="font-size:32px">💕</span><img id="mpImg2"></div><h3>你们互相心仪了！</h3><div class="ac-panel"><h4>💬 AI破冰话题</h4><div id="mpIce" style="font-size:14px;color:var(--text)"></div></div><button class="btn btn-p" style="margin-top:16px" onclick="closeMatchModal()">💬 开始聊天</button><button class="btn btn-s" style="margin-top:8px" onclick="closeMatchModal()">继续浏览</button></div></div>
+
+<!-- Nav -->
+<nav id="mainNav" class="hidden">
+<div class="tab on" id="navRec" onclick="showTab('rec')"><span class="ic">💘</span>推荐</div>
+<div class="tab" id="navDis" onclick="showTab('dis')"><span class="ic">✨</span>发现</div>
+<div class="tab" id="navMsgs" onclick="showTab('msgs')"><span class="ic">💬</span>消息</div>
+<div class="tab" id="navAi" onclick="showTab('ai')"><span class="ic">🤖</span>AI助手</div>
+<div class="tab" id="navMe" onclick="showTab('profile')"><span class="ic">👤</span>我的</div>
+</nav>
+
+<script>
+const API = '';
+let token = '', me = {}, currentTab = 'rec', activeSid = null, activePartner = null;
+
+// ─── Auth ───
+let isRegister = false;
+function toggleAuth(){
+    isRegister=!isRegister;
+    document.getElementById('authTitle').textContent=isRegister?'注册':'登录';
+    document.getElementById('aBtn').textContent=isRegister?'注册':'登录';
+    document.getElementById('asText').textContent=isRegister?'已有账号？':'还没有账号？';
+    document.getElementById('asLink').textContent=isRegister?'立即登录':'立即注册';
+    document.getElementById('anG').classList.toggle('hidden',!isRegister);
+}
+
+async function doAuth(){
+    const phone=document.getElementById('ap').value.trim();
+    const password=document.getElementById('aw').value;
+    const nickname=document.getElementById('an').value.trim();
+    if(!phone||!password) return toast('请填写手机号和密码','error');
+    const url=isRegister?'/api/register':'/api/login';
+    const body=isRegister?{phone,password,nickname:nickname||undefined}:{phone,password};
+    try{
+        const r=await fetch(API+url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+        const d=await r.json();
+        if(!r.ok) return toast(d.detail||'操作失败','error');
+        token=d.data.token; me=d.data;
+        localStorage.setItem('aim_token',token);
+        localStorage.setItem('aim_me',JSON.stringify(me));
+        document.getElementById('pgAuth').classList.add('hidden');
+        document.getElementById('pgMain').classList.remove('hidden');
+        document.getElementById('mainNav').classList.remove('hidden');
+        document.getElementById('logoutBtn').classList.remove('hidden');
+        document.getElementById('ht').textContent='AI缘份';
+        showTab('rec');
+        toast(d.code===0?'登录成功':'注册成功');
+    }catch(e){toast('网络错误，请重试','error')}
+}
+
+function logout(){
+    token='';me={};activeSid=null;activePartner=null;localStorage.clear();
+    document.getElementById('pgAuth').classList.remove('hidden');
+    document.getElementById('pgMain').classList.add('hidden');
+    document.getElementById('mainNav').classList.add('hidden');
+    document.getElementById('logoutBtn').classList.add('hidden');
+    document.getElementById('chatInputBar').classList.add('hidden');
+}
+
+// ─── Navigation ───
+function showTab(tab){
+    currentTab=tab;
+    document.querySelectorAll('#pgMain>div').forEach(e=>e.classList.add('hidden'));
+    document.querySelectorAll('nav .tab').forEach(e=>e.classList.remove('on'));
+    document.getElementById('chatInputBar').classList.add('hidden');
+    document.getElementById('ht').textContent=tabsTitle[tab]||'AI缘份';
+    const tabEl=document.getElementById('tab'+tab.charAt(0).toUpperCase()+tab.slice(1));
+    if(tabEl)tabEl.classList.remove('hidden');
+    const navEl=document.getElementById('nav'+tab.charAt(0).toUpperCase()+tab.slice(1));
+    if(navEl)navEl.classList.add('on');
+    if(tab==='rec')loadRecs();
+    else if(tab==='msgs')loadSessions();
+    else if(tab==='profile')loadProfile();
+    else if(tab==='matches')loadMatches();
+}
+const tabsTitle={rec:'推荐',dis:'发现',msgs:'消息',chat:'聊天',ai:'AI助手',profile:'我的资料',matches:'我的缘分',vip:'VIP中心'};
+
+// ─── API helpers ───
+async function api(url,opt={}){
+    const u=new URL(API+url,location.origin);u.searchParams.set('token',token);
+    const r=await fetch(u,{headers:{'Content-Type':'application/json'},...opt});
+    if(r.status===401){logout();throw new Error('请重新登录')}
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.detail||'请求失败');
+    return d;
+}
+
+// ─── Recommendations ───
+async function loadRecs(){
+    try{
+        const d=await api('/api/recommendations');
+        const container=document.getElementById('recCards');
+        const empty=document.getElementById('recEmpty');
+        if(!d.data.length){empty.classList.remove('hidden');container.innerHTML='';return}
+        empty.classList.add('hidden');
+        container.innerHTML=d.data.map((u,i)=>`
+        <div class="m-card" id="rcard${i}">
+            <img class="ph" src="${(u.photos||[])[0]||'https://picsum.photos/400/500?random='+u.id}" alt="${u.nickname}" onerror="this.src='https://picsum.photos/400/500?random='+u.id">
+            <div class="inf">
+                <span class="ms">匹配度 ${u.match_score}%</span>
+                <h3>${u.nickname} · ${u.age||'?'}岁 ${u.vip!=='none'?'<span class="vip-badge">VIP</span>':''}</h3>
+                <p style="font-size:13px;color:var(--t2);margin:4px 0">📍 ${u.city||'未知'} | ${u.occupation||''} | ${u.education||''}</p>
+                <div class="tags">${(u.interests||[]).slice(0,4).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+                <p style="font-size:12px;color:var(--t2);margin:6px 0">${u.bio||''}</p>
+                <div class="prog"><div class="fl" style="width:${u.match_score}%"></div></div>
+                <p style="font-size:12px;color:var(--primary)">AI: ${u.match_reason||'综合契合度高'}</p>
+            </div>
+            <div class="act">
+                <button class="bs bsk" onclick="skipUser(${u.id},${i})">✕</button>
+                <button class="bs bsl" onclick="likeUser(${u.id},${i},'${u.nickname}','${(u.photos||[])[0]||''}')">♥</button>
+            </div>
+        </div>`).join('');
+    }catch(e){toast(e.message,'error')}
+}
+
+async function likeUser(uid,idx,nickname,photo){
+    try{
+        const d=await api('/api/like',{method:'POST',body:JSON.stringify({to_uid:uid,action:'like'})});
+        if(d.data.is_mutual){
+            document.getElementById('mpImg1').src=(me.photos||[])[0]||'https://picsum.photos/200?random=me';
+            document.getElementById('mpImg2').src=photo||'https://picsum.photos/200?random='+uid;
+            document.getElementById('mpIce').textContent='你们都喜欢什么类型的音乐？最近有什么有趣的计划？';
+            document.getElementById('matchModal').classList.remove('hidden');
+        }
+        toast(d.msg||'已心仪');
+        const card=document.getElementById('rcard'+idx);
+        if(card){card.style.transform='translateX(150px)';card.style.opacity='0';card.style.transition='.3s';
+        setTimeout(()=>{card.remove();if(!document.querySelector('.m-card'))loadRecs()},300)}
+    }catch(e){toast(e.message,'error')}
+}
+
+async function skipUser(uid,idx){
+    await api('/api/like',{method:'POST',body:JSON.stringify({to_uid:uid,action:'skip'})}).catch(()=>{});
+    const card=document.getElementById('rcard'+idx);
+    if(card){card.style.transform='translateX(-150px)';card.style.opacity='0';card.style.transition='.3s';
+    setTimeout(()=>{card.remove();if(!document.querySelector('.m-card'))loadRecs()},300)}
+}
+
+function closeMatchModal(){document.getElementById('matchModal').classList.add('hidden');loadSessions();showTab('msgs')}
+
+// ─── Sessions ───
+async function loadSessions(){
+    try{
+        const d=await api('/api/sessions');
+        const list=document.getElementById('convList'),empty=document.getElementById('msgEmpty');
+        if(!d.data.length){empty.classList.remove('hidden');list.innerHTML='';return}
+        empty.classList.add('hidden');
+        list.innerHTML=d.data.map(s=>`
+        <div class="conv" onclick="openChat(${s.id},${s.partner?.id||0},'${s.partner?.nickname||''}','${(s.partner?.photos||[])[0]||''}')">
+            <img class="av" src="${(s.partner?.photos||[])[0]||'https://picsum.photos/100?random='+s.id}" onerror="this.src='https://picsum.photos/100'">
+            <div style="flex:1"><strong>${s.partner?.nickname||'未知'}</strong><p style="font-size:13px;color:var(--t2)">${s.last_msg||'匹配成功，开始聊天吧~'}</p></div>
+            ${s.unread?`<span class="badge">${s.unread}</span>`:''}
+        </div>`).join('');
+    }catch(e){}
+}
+
+async function openChat(sid,pid,nickname,photo){
+    activeSid=sid;activePartner={id:pid,nickname,photo};
+    document.getElementById('ht').textContent=nickname;
+    document.querySelectorAll('#pgMain>div').forEach(e=>e.classList.add('hidden'));
+    document.getElementById('tabChat').classList.remove('hidden');
+    document.getElementById('chatInputBar').classList.remove('hidden');
+    document.getElementById('navRec').classList.remove('on');
+    try{
+        const d=await api('/api/messages/'+sid);
+        const container=document.getElementById('chatMsgs');
+        container.innerHTML=d.data.map(m=>`
+        <div class="bub ${m.sender_id===me.id||m.sender_id===me.uid?'me':'you'}">
+            ${m.sender_id===me.id||m.sender_id===me.uid?'':'<strong style="font-size:12px">'+nickname+'</strong><br>'}${esc(m.content)}
+        </div>`).join('');
+        container.scrollTop=container.scrollHeight;
+    }catch(e){}
+}
+
+async function sendChatMsg(){
+    const inp=document.getElementById('chatInput');
+    const content=inp.value.trim();
+    if(!content||!activeSid) return;
+    inp.value='';
+    try{
+        await api('/api/messages',{method:'POST',body:JSON.stringify({sid:activeSid,content})});
+        openChat(activeSid,activePartner.id,activePartner.nickname,activePartner.photo);
+    }catch(e){toast(e.message,'error')}
+}
+
+// ─── Profile ───
+async function loadProfile(){
+    try{
+        const d=await api('/api/me'); me=d.data;
+        document.getElementById('profileContent').innerHTML=`
+        <div style="text-align:center;margin-bottom:16px">
+            <img src="${(me.photos||[])[0]||'https://picsum.photos/200'}" style="width:80px;height:80px;border-radius:50%;object-fit:cover" onerror="this.src='https://picsum.photos/200'">
+            <h2>${me.nickname} · ${me.age||'?'}岁 ${me.verified?'<span class="ver-badge">✅</span>':''} ${me.vip!=='none'?'<span class="vip-badge">VIP</span>':''}</h2>
+            <p style="color:var(--t2);font-size:13px">${me.city||'未设置'} | ${me.occupation||'未设置'}</p>
+        </div>
+        <div class="card">
+            <h4>基本信息</h4>
+            <div class="inf-row"><span class="l">📱 手机</span><span>${me.phone||''}</span></div>
+            <div class="inf-row"><span class="l">🎂 年龄</span><span>${me.age||'未设置'}</span></div>
+            <div class="inf-row"><span class="l">📍 城市</span><span>${me.city||'未设置'}</span></div>
+            <div class="inf-row"><span class="l">📏 身高</span><span>${me.height?me.height+'cm':'未设置'}</span></div>
+            <div class="inf-row"><span class="l">🎓 学历</span><span>${me.education||'未设置'}</span></div>
+            <div class="inf-row"><span class="l">💼 职业</span><span>${me.occupation||'未设置'}</span></div>
+            <div class="inf-row"><span class="l">🧠 MBTI</span><span>${me.mbti||'未测试'}</span></div>
+            <div class="inf-row"><span class="l">💝 恋爱观</span><span>${me.love_values||'未设置'}</span></div>
+            <div class="inf-row"><span class="l">🎯 兴趣</span><span>${(me.interests||[]).join('、')||'未设置'}</span></div>
+        </div>
+        <div class="card"><h4>个人简介</h4><p style="font-size:14px;margin-top:6px">${me.bio||'这个人很懒，什么都没写...'}</p></div>
+        <button class="btn btn-p" onclick="editProfile()">✏️ 编辑资料</button>`;
+    }catch(e){}
+}
+
+function editProfile(){
+    const f=[
+        {k:'nickname',l:'昵称',t:'text'},{k:'age',l:'年龄',t:'number'},{k:'city',l:'城市',t:'text'},
+        {k:'height',l:'身高(cm)',t:'number'},{k:'education',l:'学历',t:'text'},{k:'occupation',l:'职业',t:'text'},
+        {k:'income',l:'收入',t:'text'},{k:'mbti',l:'MBTI类型',t:'text'},{k:'interests',l:'兴趣爱好(逗号分隔)',t:'text'},
+        {k:'love_values',l:'婚恋观',t:'text'},{k:'bio',l:'个人简介',t:'textarea'}
+    ];
+    const fields=f.map(x=>`<div class="inp"><label>${x.l}</label><${x.t=='textarea'?'textarea':'input type="'+x.t+'"'} id="ef_${x.k}" value="${x.t=='textarea'?'':(me[x.k]||'')}" placeholder="请输入${x.l}">${x.t=='textarea'?me[x.k]||'':''}</${x.t=='textarea'?'textarea':'input'}></div>`).join('');
+    const modal=document.createElement('div');modal.className='modal';
+    modal.innerHTML=`<div class="modal-box"><h3>编辑资料</h3>${fields}<button class="btn btn-p" style="margin-top:12px" id="saveProfile">保存</button><button class="btn btn-s" style="margin-top:8px" onclick="this.closest('.modal').remove()">取消</button></div>`;
+    document.body.appendChild(modal);
+    modal.querySelector('#saveProfile').onclick=async()=>{
+        const data={};
+        f.forEach(x=>{const v=modal.querySelector('#ef_'+x.k).value.trim();if(v)data[x.k]=v});
+        try{await api('/api/profile',{method:'PUT',body:JSON.stringify(data)});modal.remove();loadProfile();toast('资料更新成功')}
+        catch(e){toast(e.message,'error')}
+    }
+}
+
+// ─── Matches ───
+async function loadMatches(){
+    try{
+        const d=await api('/api/my-matches');
+        const list=document.getElementById('matchList'),empty=document.getElementById('matchEmpty');
+        if(!d.data.length){empty.classList.remove('hidden');list.innerHTML='';return}
+        empty.classList.add('hidden');
+        list.innerHTML=d.data.map(m=>`
+        <div class="card" style="display:flex;gap:14px;align-items:center">
+            <img src="${(m.photos||[])[0]||'https://picsum.photos/100?r='+m.pid}" style="width:60px;height:60px;border-radius:50%;object-fit:cover" onerror="this.src='https://picsum.photos/100'">
+            <div style="flex:1"><h4>${m.nickname} · ${m.age||'?'}岁</h4><p style="font-size:12px;color:var(--t2)">${m.city||''} | ${m.occupation||''} | ${m.mbti||''}</p><p style="font-size:11px;color:var(--primary)">匹配度 ${m.score}%</p></div>
+        </div>`).join('');
+    }catch(e){}
+}
+
+// ─── Who liked me ───
+async function loadWhoLikedMe(){
+    let html='<h3 style="margin-bottom:12px">👀 谁喜欢了我</h3>';
+    try{
+        const d=await api('/api/who-liked-me');
+        if(!d.data.length) html+='<div class="emp"><div class="ei">👻</div><p>暂时还没有人喜欢你</p></div>';
+        else html+=d.data.map(u=>`<div class="card" style="display:flex;gap:12px;align-items:center"><img src="${(u.photos?JSON.parse(u.photos):[])[0]||'https://picsum.photos/100'}" style="width:50px;height:50px;border-radius:50%;object-fit:cover"><div><strong>${u.nickname}</strong> · ${u.age}岁<p style="font-size:12px;color:var(--t2)">${u.city} | ${u.occupation}</p></div></div>`).join('');
+    }catch(e){html='<p>加载失败</p>'}
+    const modal=document.createElement('div');modal.className='modal';
+    modal.innerHTML=`<div class="modal-box">${html}<button class="btn btn-s" style="margin-top:12px" onclick="this.closest('.modal').remove()">关闭</button></div>`;
+    document.body.appendChild(modal);
+}
+
+// ─── Utils ───
+function esc(s){return s.replace(/</g,'<').replace(/>/g,'>')}
+function toast(msg,type='success'){
+    const t=document.createElement('div');t.className='toast';t.style.background=type==='error'?'var(--danger)':'var(--success)';
+    t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);
+}
+
+// ─── Init ───
+(function(){
+    const saved=localStorage.getItem('aim_token');
+    if(saved){token=saved;
+        try{me=JSON.parse(localStorage.getItem('aim_me')||'{}')}catch(e){}
+        document.getElementById('pgAuth').classList.add('hidden');
+        document.getElementById('pgMain').classList.remove('hidden');
+        document.getElementById('mainNav').classList.remove('hidden');
+        document.getElementById('logoutBtn').classList.remove('hidden');
+        showTab('rec');
+    }
+})();
+</script>
+</body>
+</html>
